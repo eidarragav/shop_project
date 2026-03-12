@@ -1,0 +1,49 @@
+from flask import jsonify, request, current_app
+from firebase import db
+
+def register_routes(app):
+    @app.route("/api/products", methods = ['POST'])
+    def post_products():
+        data = request.get_json()
+        product = {
+            "name" : data["name"],
+            "price" : data["price"],
+            "stock" : data["stock"],
+            "category" : data["category"]
+        }
+
+        db.collection("products").add(product)
+
+        return jsonify({"mensaje" : "producto creado con exito"})
+
+    @app.route("/api/products", methods = ['GET'])
+    def get_products():
+        products = db.collection("products").stream()
+
+        resultado = []
+
+        return jsonify([{"Nombre" : p.name, "Price" : p.price, "Stock" : p.stock, "Category" : p.category}] for p in products)
+
+    
+    @app.route("/api/products/<int:id>", methods = ["PUT"])
+    def edit_product(id):
+        data = request.get_json()
+
+        db.collection("products").document(id).update({
+            "name" : data["name"],
+            "price" : data["price"],
+            "quantity" : data["quantity"],
+            "category" : data["category"],
+        })
+
+        return jsonify({"mensaje" : "Producto actualizado"})
+    
+
+    @app.route("/api/products/<int:id>", methods = ["DELETE"])
+    def delete_products(id):
+        product = db.collection("products").document(id).delete()
+        
+
+
+        
+    
