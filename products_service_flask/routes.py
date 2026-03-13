@@ -22,24 +22,33 @@ def register_routes(app):
 
         resultado = []
 
-        return jsonify([{"Nombre" : p.name, "Price" : p.price, "Stock" : p.stock, "Category" : p.category}] for p in products)
+        for p in products:
+            resultado.append({
+                "id": p.id,
+                "name": p.get("name"),
+                "price": p.get("price"),
+                "stock": p.get("stock"),
+                "category": p.get("category")
+        })
+
+        return jsonify(resultado)
 
     
-    @app.route("/api/products/<int:id>", methods = ["PUT"])
+    @app.route("/api/products/<id>", methods = ["PUT"])
     def edit_product(id):
         data = request.get_json()
 
         db.collection("products").document(id).update({
             "name" : data["name"],
             "price" : data["price"],
-            "quantity" : data["quantity"],
+            "stock" : data["stock"],
             "category" : data["category"],
         })
 
         return jsonify({"mensaje" : "Producto actualizado"})
     
 
-    @app.route("/api/products/<int:id>", methods = ["DELETE"])
+    @app.route("/api/products/<id>", methods = ["DELETE"])
     def delete_products(id):
         product = db.collection("products").document(id).delete()
         
