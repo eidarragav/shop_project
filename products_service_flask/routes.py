@@ -2,6 +2,33 @@ from flask import jsonify, request, current_app
 from firebase import db
 
 def register_routes(app):
+    @app.route("/api/products/validar_stock/<id>", methods = ["GET"])
+    def validar_stock(id):
+        product = db.collection("products").document(id).get()
+        if(not product.exists):
+           return jsonify({"mensaje": "Producto no encontrado"}), 404
+        
+        stock = product.get("stock")
+        return {"id": id, "stock" : stock}
+    
+    @app.route("/api/products/descontar_stock/<id>", methods = ["POST"])
+    def descontar_stock(id):
+        data = request.get_json();
+
+        product_ref = db.collection("products").document(id)
+        product = product_ref.get()
+
+        quantity = data["quantity"]
+
+        product_ref.update({
+            "stock" : product.get("stock") - quantity
+        })
+
+        return jsonify({"mensaje" : "stock actualizado"})
+
+
+
+
     @app.route("/api/products", methods = ['POST'])
     def post_products():
         data = request.get_json()

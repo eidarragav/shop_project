@@ -8,12 +8,38 @@ use Illuminate\Support\Facades\Http;
 class ExpressController extends Controller
 {
     public function create_sales(Request $request){
+        $product_id = $request->product_id;
+        $quantity = $request->quantity;
+        
+        //Consultamos si el producto existe y su stock
+        $stock_res = Http::withHeaders([
+            "Authorization" => env("TOKEN_APIS")
+        ])->get(env("CHECK_PRODUCT_STOCK_ENDPOINT")."/".$product_id);
+
+        //Si no lo encuentra
+        if($stock_res->status() == 404){
+            return response()->json(["mensaje" => "producto no encontrado"]);
+        }
+
+        //Si no es suficiente el stock
+        if($stock_res["stock"] < $quantity){
+            return response()->json(["mensaje"=> "stock no disponible"]);
+        }
+
+
+        //Si ninguna se cumple, puede crear la venta con seguridad
         $response = Http::withHeaders([
             "Authorization" => env("TOKEN_APIS")
         ])->post(env("SALES_ENDPOINT"), [
             "quantity" => $request->quantity,
             "total" => $request->total,
             "product_id" => $request->product_id
+        ]);
+
+        $stockUpdate = Http::withHeaders([
+            "Authorization" => env("TOKEN_APIS")
+        ])->post(env("UPDATE_PRODUCT_STOCK_ENDPOINT")."/".$product_id, [
+            "quantity" => $request->quantity    
         ]);
 
         return [
