@@ -49,4 +49,15 @@ class FlaskController extends Controller
             "body" => $response->body()
         ];
     }
+
+    public function delete_products($id){
+        $response = Http::withHeaders([
+            "Authorization" => env("TOKEN_APIS")
+        ])->delete(env("PRODUCTS_ENDPOINT")."/".$id);
+
+        return [
+            "status" => $response->status(),
+            "body" => $response->body()
+        ];
+    }
 }

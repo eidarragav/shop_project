@@ -12,7 +12,7 @@ const saleSchema = new mongoose.Schema({
     },
 
     product_id: {
-        type: Number,
+        type: String,
         required: true
     }
 });

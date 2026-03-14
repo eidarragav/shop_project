@@ -30,3 +30,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api'
 Route::get("/products", [FlaskController::class, 'index_products']);
 Route::post("/products", [FlaskController::class, 'create_products']);
 Route::put("/products/{id}", [FlaskController::class, 'update_products']);
+Route::delete("/products/{id}", [FlaskController::class, 'delete_products']);
+
+
+//Express ventas
+Route::get("/sales", [ExpressController::class, 'index_sales']);
+Route::post("/sales", [ExpressController::class, 'create_sales']);
+Route::put("/sales/{id}", [ExpressController::class, 'update_sales']);
+Route::delete("/sales/{id}", [ExpressController::class, 'delete_sales']);
