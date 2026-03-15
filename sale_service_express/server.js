@@ -44,6 +44,16 @@ app.delete("/api/sales/:id", async (req, res) => {
     res.json({ message: "Venta eliminada" });
 });
 
+app.post("/api/my_sales", async (req, res) => {
+
+    const { user_id } = req.body;
+
+    const sales = await Sale.find({ user_id: user_id });
+
+    return res.json(sales);
+
+});
+
 
 
 const PORT = process.env.PORT;

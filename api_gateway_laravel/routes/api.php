@@ -35,6 +35,7 @@ Route::delete("/products/{id}", [FlaskController::class, 'delete_products']);
 
 //Express ventas
 Route::get("/sales", [ExpressController::class, 'index_sales']);
-Route::post("/sales", [ExpressController::class, 'create_sales']);
-Route::put("/sales/{id}", [ExpressController::class, 'update_sales']);
+Route::post("/sales", [ExpressController::class, 'create_sales'])->middleware('auth:api');
+Route::put("/sales/{id}", [ExpressController::class, 'update_sales'])->middleware('auth:api');
 Route::delete("/sales/{id}", [ExpressController::class, 'delete_sales']);
+Route::post("/my_sales", [ExpressController::class, 'my_sales']);

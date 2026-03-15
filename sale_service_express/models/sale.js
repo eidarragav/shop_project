@@ -14,6 +14,11 @@ const saleSchema = new mongoose.Schema({
     product_id: {
         type: String,
         required: true
+    },
+
+    user_id: {
+        type: Number,
+        required: true
     }
 });
 

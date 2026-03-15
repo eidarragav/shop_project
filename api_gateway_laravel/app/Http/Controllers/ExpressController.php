@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class ExpressController extends Controller
 {
     public function create_sales(Request $request){
+        $user = Auth::user();
+
         $product_id = $request->product_id;
         $quantity = $request->quantity;
         
@@ -31,6 +34,7 @@ class ExpressController extends Controller
         $response = Http::withHeaders([
             "Authorization" => env("TOKEN_APIS")
         ])->post(env("SALES_ENDPOINT"), [
+            "user_id" =>$user->id,
             "quantity" => $request->quantity,
             "total" => $request->total,
             "product_id" => $request->product_id
@@ -60,9 +64,12 @@ class ExpressController extends Controller
     }
 
     public function update_sales(Request $request, $id){
+        $user = Auth::user();
+
         $response = Http::withHeaders([
             "Authorization" => env("TOKEN_APIS")
         ])->put(env("SALES_ENDPOINT")."/".$id,[
+            "user_id" => $user->id,
             "quantity" => $request->quantity,
             "total" => $request->total,
             "product_id" => $request->product_id
@@ -81,6 +88,21 @@ class ExpressController extends Controller
 
         return [
             "status" => $response->status(),
+            "body" => $response->body()
+        ];
+    }
+
+    public function my_sales(){
+        $user = Auth::user();
+
+        $response = Http::withHeaders([
+            "Authorization" => env("TOKEN_APIS")
+        ])->post(env("MY_SALES_ENDPOINT"), [
+            "user_id" => $user->id
+        ]);
+
+        return [
+            "reponse" => $response->status(),
             "body" => $response->body()
         ];
     }
