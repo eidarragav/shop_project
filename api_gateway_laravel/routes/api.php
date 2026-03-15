@@ -26,16 +26,22 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
+
 //Flask productos
-Route::get("/products", [FlaskController::class, 'index_products']);
-Route::post("/products", [FlaskController::class, 'create_products']);
-Route::put("/products/{id}", [FlaskController::class, 'update_products']);
-Route::delete("/products/{id}", [FlaskController::class, 'delete_products']);
+Route::middleware('auth:api')->group(function(){
+    Route::get("/products", [FlaskController::class, 'index_products']);
+    Route::post("/products", [FlaskController::class, 'create_products']);
+    Route::put("/products/{id}", [FlaskController::class, 'update_products']);
+    Route::delete("/products/{id}", [FlaskController::class, 'delete_products']);
+});
 
 
 //Express ventas
-Route::get("/sales", [ExpressController::class, 'index_sales']);
-Route::post("/sales", [ExpressController::class, 'create_sales'])->middleware('auth:api');
-Route::put("/sales/{id}", [ExpressController::class, 'update_sales'])->middleware('auth:api');
-Route::delete("/sales/{id}", [ExpressController::class, 'delete_sales']);
-Route::post("/my_sales", [ExpressController::class, 'my_sales']);
+Route::middleware('auth:api')->group(function(){
+    Route::get("/sales", [ExpressController::class, 'index_sales']);
+    Route::post("/sales", [ExpressController::class, 'create_sales']);
+    Route::put("/sales/{id}", [ExpressController::class, 'update_sales']);
+    Route::delete("/sales/{id}", [ExpressController::class, 'delete_sales']);
+    Route::post("/my_sales", [ExpressController::class, 'my_sales']);
+})
+

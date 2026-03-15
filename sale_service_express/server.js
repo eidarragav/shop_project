@@ -9,27 +9,37 @@ app.use(express.json());
 
 connectDB();
 
+const TOKEN_SECRETO = process.env.TOKEN_APIS
+
+function requireToken(req, res, next){
+    const token = req.headers["Authorization"];
+    if(token !== `${TOKEN_SECRETO}`){
+        return res.status(401).json({error : "No autorizado"})
+    }
+    next();
+}
+
 
 
 const Sale = require("./models/sale.js");
 
-app.get("/api/sales", async (req, res) => {
+app.get("/api/sales", requireToken, async (req, res) => {
     const sales = await Sale.find();
     res.json(sales);
 });
 
-app.post("/api/sales", async (req, res) => {
+app.post("/api/sales", requireToken, async (req, res) => {
     const sale = new Sale(req.body);
     const savedSale = await sale.save();
     res.json(savedSale);
 });
 
-app.get("/api/sales/:id", async (req, res) => {
+app.get("/api/sales/:id", requireToken, async (req, res) => {
     const sale = await Sale.findById(req.params.id);
     res.json(sale);
 });
 
-app.put("/api/sales/:id", async (req, res) => {
+app.put("/api/sales/:id", requireToken, async (req, res) => {
     const updated = await Sale.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -39,12 +49,12 @@ app.put("/api/sales/:id", async (req, res) => {
     res.json(updated);
 });
 
-app.delete("/api/sales/:id", async (req, res) => {
+app.delete("/api/sales/:id", requireToken, async (req, res) => {
     await Sale.findByIdAndDelete(req.params.id);
     res.json({ message: "Venta eliminada" });
 });
 
-app.post("/api/my_sales", async (req, res) => {
+app.post("/api/my_sales", requireToken, async (req, res) => {
 
     const { user_id } = req.body;
 

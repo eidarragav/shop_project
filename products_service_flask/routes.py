@@ -1,8 +1,23 @@
 from flask import jsonify, request, current_app
 from firebase import db
+from dotenv import load_dotenv
+from functools import wraps
+import os
+
+load_dotenv()
+
+def require_token(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if token!= os.getenv("TOKEN_APIS"):
+            return jsonify({'error' : "no aturizado"})
+        return f(*args, **kwargs)
+    return decorated
 
 def register_routes(app):
     @app.route("/api/products/validar_stock/<id>", methods = ["GET"])
+    @require_token
     def validar_stock(id):
         product = db.collection("products").document(id).get()
         if(not product.exists):
@@ -12,6 +27,7 @@ def register_routes(app):
         return {"id": id, "stock" : stock}
     
     @app.route("/api/products/descontar_stock/<id>", methods = ["POST"])
+    @require_token
     def descontar_stock(id):
         data = request.get_json();
 
@@ -30,6 +46,7 @@ def register_routes(app):
 
 
     @app.route("/api/products", methods = ['POST'])
+    @require_token
     def post_products():
         data = request.get_json()
         product = {
@@ -44,6 +61,7 @@ def register_routes(app):
         return jsonify({"mensaje" : "producto creado con exito"})
 
     @app.route("/api/products", methods = ['GET'])
+    @require_token
     def get_products():
         products = db.collection("products").stream()
 
@@ -62,6 +80,7 @@ def register_routes(app):
 
     
     @app.route("/api/products/<id>", methods = ["PUT"])
+    @require_token
     def edit_product(id):
         data = request.get_json()
 
@@ -76,6 +95,7 @@ def register_routes(app):
     
 
     @app.route("/api/products/<id>", methods = ["DELETE"])
+    @require_token
     def delete_products(id):
         product = db.collection("products").document(id).delete()
         
