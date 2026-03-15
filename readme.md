@@ -55,6 +55,29 @@ Responsabilidades:
 * consultar ventas por usuario
 * almacenamiento en **MongoDB**
 
+
+### Modelo de arquitectura
+```mermaid
+flowchart LR
+
+Cliente[Cliente / Postman]
+
+Gateway[API Gateway - Laravel]
+
+Productos[Microservicio Productos - Flask]
+Ventas[Microservicio Ventas - Express]
+
+Firestore[(Firebase Firestore)]
+Mongo[(MongoDB)]
+
+Cliente -->|JWT Authentication| Gateway
+
+Gateway -->|TOKEN_APIS| Productos
+Gateway -->|TOKEN_APIS| Ventas
+
+Productos --> Firestore
+Ventas --> Mongo
+```
 ---
 
 # Seguridad
@@ -205,29 +228,6 @@ http://127.0.0.1:8000
 
 Este servicio gestiona productos y el stock utilizando **Firebase Firestore**.
 
-## Arquitectura del sistema
-
-```mermaid
-flowchart LR
-
-Cliente[Cliente / Postman]
-
-Gateway[API Gateway - Laravel]
-
-Productos[Microservicio Productos - Flask]
-Ventas[Microservicio Ventas - Express]
-
-Firestore[(Firebase Firestore)]
-Mongo[(MongoDB)]
-
-Cliente -->|JWT Authentication| Gateway
-
-Gateway -->|TOKEN_APIS| Productos
-Gateway -->|TOKEN_APIS| Ventas
-
-Productos --> Firestore
-Ventas --> Mongo
-```
 
 ## Instalación
 
