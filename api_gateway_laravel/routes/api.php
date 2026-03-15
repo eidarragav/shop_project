@@ -43,5 +43,5 @@ Route::middleware('auth:api')->group(function(){
     Route::put("/sales/{id}", [ExpressController::class, 'update_sales']);
     Route::delete("/sales/{id}", [ExpressController::class, 'delete_sales']);
     Route::post("/my_sales", [ExpressController::class, 'my_sales']);
-})
+});
 
